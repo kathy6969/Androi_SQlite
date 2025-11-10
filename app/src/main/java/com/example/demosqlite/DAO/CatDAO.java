@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class CatDAO {
 
     MyDbhelper dbHelper;
-SQLiteDatabase db;
+    SQLiteDatabase db;
     static String TAG = "zzzzzzzzzzzzzz";
 
   public CatDAO(Context context) {
@@ -29,6 +29,22 @@ SQLiteDatabase db;
         values.put("name", catDTO.getName());
         return (int) db.insert("tb_cat", null, values);
 }
+
+    public ArrayList<CatDTO> getList() {
+        ArrayList<CatDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM tb_cat";
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                CatDTO catDTO = new CatDTO();
+                catDTO.setId(cursor.getInt(0));
+                catDTO.setName(cursor.getString(1));
+                list.add(catDTO);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
+    }
 
 //--cần viết thêm :hàm lấy danh sách,lấy bản ghi ,sửa ,xóa
 public ArrayList<CatDTO> getAllCat(){
@@ -99,23 +115,3 @@ public boolean deleteCat(int id) {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
