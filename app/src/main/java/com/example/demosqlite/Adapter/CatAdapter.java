@@ -42,7 +42,11 @@ public class CatAdapter extends RecyclerView.Adapter<CatAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CatDTO catDTO = list.get(position);
-        holder.tv_id.setText(String.valueOf(catDTO.getId()));
+
+        // Hiển thị vị trí trong danh sách (bắt đầu từ 1) thay vì ID thật của DB.
+        // Điều này tạo ra số thứ tự liền mạch trên giao diện mà không cần thay đổi ID trong DB.
+        // ID thật từ catDTO.getId() vẫn được dùng cho các chức năng sửa/xóa.
+        holder.tv_id.setText(String.valueOf(position + 1));
         holder.tv_name.setText(catDTO.getName());
 
         holder.img_edit.setOnClickListener(v -> showEditDialog(catDTO));
