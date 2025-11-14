@@ -43,7 +43,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ProductDTO productDTO = list.get(position);
-        holder.tv_id.setText(String.valueOf(productDTO.getId()));
+        holder.tv_id.setText(String.valueOf(position + 1));
         holder.tv_name.setText(productDTO.getName());
         holder.tv_price.setText(String.valueOf(productDTO.getPrice()));
 
@@ -79,6 +79,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_product, null);
         builder.setView(view);
+        builder.setCancelable(false);
 
         EditText etName = view.findViewById(R.id.et_product_name);
         EditText etPrice = view.findViewById(R.id.et_product_price);
@@ -87,19 +88,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         etPrice.setText(String.valueOf(productDTO.getPrice()));
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = etName.getText().toString();
-            double price = Double.parseDouble(etPrice.getText().toString());
+            String name = etName.getText().toString().trim();
+            String priceStr = etPrice.getText().toString().trim();
 
-            productDTO.setName(name);
-            productDTO.setPrice(price);
-
-            if (productDAO.updateProduct(productDTO) > 0) {
-                Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT).show();
-                list.clear();
-                list.addAll(productDAO.getList());
-                notifyDataSetChanged();
+            if (name.isEmpty() || priceStr.isEmpty()) {
+                Toast.makeText(context, "Tên và giá không được để trống", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(context, "Failed to update product", Toast.LENGTH_SHORT).show();
+                double price = Double.parseDouble(priceStr);
+                productDTO.setName(name);
+                productDTO.setPrice(price);
+
+                if (productDAO.updateProduct(productDTO) > 0) {
+                    Toast.makeText(context, "Product updated successfully", Toast.LENGTH_SHORT).show();
+                    list.clear();
+                    list.addAll(productDAO.getList());
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "Failed to update product", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -114,6 +120,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete Product");
         builder.setMessage("Are you sure you want to delete this product?");
+        builder.setCancelable(false);
         builder.setPositiveButton("Delete", (dialog, which) -> {
             if (productDAO.deleteProduct(productDTO.getId()) > 0) {
                 Toast.makeText(context, "Product deleted successfully", Toast.LENGTH_SHORT).show();

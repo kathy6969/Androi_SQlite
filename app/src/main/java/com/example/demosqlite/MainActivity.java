@@ -32,5 +32,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        Button btnManageProduct = findViewById(R.id.btn_manage_product);
+        btnManageProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ProductActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

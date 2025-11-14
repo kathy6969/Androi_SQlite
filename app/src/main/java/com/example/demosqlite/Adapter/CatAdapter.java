@@ -79,16 +79,20 @@ public class CatAdapter extends RecyclerView.Adapter<CatAdapter.MyViewHolder> {
         etName.setText(catDTO.getName());
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = etName.getText().toString();
-            catDTO.setName(name);
-
-            if (catDAO.updateCat(catDTO)) {
-                Toast.makeText(context, "Category updated successfully", Toast.LENGTH_SHORT).show();
-                list.clear();
-                list.addAll(catDAO.getList());
-                notifyDataSetChanged();
+            String name = etName.getText().toString().trim();
+            if (name.isEmpty()) {
+                Toast.makeText(context, "Tên không được để trống", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(context, "Failed to update category", Toast.LENGTH_SHORT).show();
+                catDTO.setName(name);
+
+                if (catDAO.updateCat(catDTO)) {
+                    Toast.makeText(context, "Category updated successfully", Toast.LENGTH_SHORT).show();
+                    list.clear();
+                    list.addAll(catDAO.getList());
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, "Failed to update category", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

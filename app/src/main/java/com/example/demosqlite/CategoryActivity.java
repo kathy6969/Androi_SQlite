@@ -48,22 +48,26 @@ public class CategoryActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_category, null);
         builder.setView(view);
+        builder.setCancelable(false);
 
         EditText etName = view.findViewById(R.id.et_category_name);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = etName.getText().toString();
-
-            CatDTO newCat = new CatDTO();
-            newCat.setName(name);
-
-            if (catDAO.addCat(newCat) > 0) {
-                Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show();
-                listCat.clear();
-                listCat.addAll(catDAO.getList());
-                catAdapter.notifyDataSetChanged();
+            String name = etName.getText().toString().trim();
+            if (name.isEmpty()) {
+                Toast.makeText(this, "Tên không được để trống", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Failed to add category", Toast.LENGTH_SHORT).show();
+                CatDTO newCat = new CatDTO();
+                newCat.setName(name);
+
+                if (catDAO.addCat(newCat) > 0) {
+                    Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show();
+                    listCat.clear();
+                    listCat.addAll(catDAO.getList());
+                    catAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(this, "Failed to add category", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

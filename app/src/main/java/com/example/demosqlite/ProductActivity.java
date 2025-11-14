@@ -50,26 +50,32 @@ public class ProductActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_product, null);
         builder.setView(view);
+        builder.setCancelable(false);
 
         EditText etName = view.findViewById(R.id.et_product_name);
         EditText etPrice = view.findViewById(R.id.et_product_price);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = etName.getText().toString();
-            double price = Double.parseDouble(etPrice.getText().toString());
+            String name = etName.getText().toString().trim();
+            String priceStr = etPrice.getText().toString().trim();
 
-            ProductDTO newProduct = new ProductDTO();
-            newProduct.setName(name);
-            newProduct.setPrice(price);
-            newProduct.setId_cat(1); // Assuming a default category for now
-
-            if (productDAO.addProduct(newProduct) > 0) {
-                Toast.makeText(this, "Product added successfully", Toast.LENGTH_SHORT).show();
-                listProduct.clear();
-                listProduct.addAll(productDAO.getList());
-                productAdapter.notifyDataSetChanged();
+            if (name.isEmpty() || priceStr.isEmpty()) {
+                Toast.makeText(this, "Tên và giá không được để trống", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Failed to add product", Toast.LENGTH_SHORT).show();
+                double price = Double.parseDouble(priceStr);
+                ProductDTO newProduct = new ProductDTO();
+                newProduct.setName(name);
+                newProduct.setPrice(price);
+                newProduct.setId_cat(1); // Assuming a default category for now
+
+                if (productDAO.addProduct(newProduct) > 0) {
+                    Toast.makeText(this, "Product added successfully", Toast.LENGTH_SHORT).show();
+                    listProduct.clear();
+                    listProduct.addAll(productDAO.getList());
+                    productAdapter.notifyDataSetChanged();
+                } else {
+                    Toast.makeText(this, "Failed to add product", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
