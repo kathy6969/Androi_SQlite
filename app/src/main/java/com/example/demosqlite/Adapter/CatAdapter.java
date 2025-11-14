@@ -43,9 +43,6 @@ public class CatAdapter extends RecyclerView.Adapter<CatAdapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CatDTO catDTO = list.get(position);
 
-        // Hiển thị vị trí trong danh sách (bắt đầu từ 1) thay vì ID thật của DB.
-        // Điều này tạo ra số thứ tự liền mạch trên giao diện mà không cần thay đổi ID trong DB.
-        // ID thật từ catDTO.getId() vẫn được dùng cho các chức năng sửa/xóa.
         holder.tv_id.setText(String.valueOf(position + 1));
         holder.tv_name.setText(catDTO.getName());
 
@@ -76,6 +73,7 @@ public class CatAdapter extends RecyclerView.Adapter<CatAdapter.MyViewHolder> {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_category, null);
         builder.setView(view);
+        builder.setCancelable(false); // Không cho bấm ngoài để đóng
 
         EditText etName = view.findViewById(R.id.et_category_name);
         etName.setText(catDTO.getName());
@@ -102,6 +100,7 @@ public class CatAdapter extends RecyclerView.Adapter<CatAdapter.MyViewHolder> {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Delete Category");
         builder.setMessage("Are you sure you want to delete this category?");
+        builder.setCancelable(false); // Không cho bấm ngoài để đóng
         builder.setPositiveButton("Delete", (dialog, which) -> {
             if (catDAO.deleteCat(catDTO.getId())) {
                 Toast.makeText(context, "Category deleted successfully", Toast.LENGTH_SHORT).show();
